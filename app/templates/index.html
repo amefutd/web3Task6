@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Times Table</title>
+    <style>
+        .highlight {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <h1>Times Table</h1>
+    <table id="timesTable">
+        <!-- Times table will be generated here -->
+    </table>
+
+    <script>
+        // Fetch the times table data from the API
+        fetch('/api/times-table')
+            .then(response => response.json())
+            .then(data => {
+                // Generate the table based on the fetched data
+                const table = document.getElementById('timesTable');
+                data.forEach(rowData => {
+                    const row = document.createElement('tr');
+                    rowData.forEach(cellData => {
+                        const cell = document.createElement('td');
+                        cell.textContent = cellData.value;
+                        // Add click event listener to each cell
+                        cell.addEventListener('click', () => {
+                            // Remove highlight from all cells
+                            table.querySelectorAll('td').forEach(cell => {
+                               cell.classList.remove('highlight');
+                            });
+                            // Highlight all occurrences of the clicked number
+                            data.forEach((rData, rIndex) => {
+                                rData.forEach((cData, cIndex) => {
+                                    if (cData.value === cellData.value) {
+                                        const cellToHighlight = table.rows[rIndex].cells[cIndex];
+                                        cellToHighlight.classList.add('highlight');
+                                    }
+                                    });
+                                });
+                        });
+                        row.appendChild(cell);
+                    });
+                    table.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error fetching times table:', error));
+    </script>
+</body>
+</html>
